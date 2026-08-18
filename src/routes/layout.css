@@ -1,0 +1,38 @@
+@import 'tailwindcss';
+
+@theme {
+	--font-display: 'Baloo 2', system-ui, sans-serif;
+	--font-body: 'Plus Jakarta Sans', system-ui, sans-serif;
+
+	--color-bg: oklch(0.97 0.014 70);
+	--color-surface: oklch(0.995 0.006 70);
+	--color-ink: oklch(0.24 0.02 55);
+	--color-ink-soft: oklch(0.5 0.02 60);
+	--color-ink-faint: oklch(0.68 0.015 60);
+	--color-line: oklch(0.91 0.015 65);
+	--color-track: oklch(0.93 0.018 65);
+
+	--color-flame: oklch(0.68 0.19 42);
+	--color-flame-tint: oklch(0.95 0.045 45);
+	--color-flame-dim: oklch(0.87 0.02 60);
+	--color-flame-ink: oklch(0.4 0.14 35);
+
+	--color-purple: oklch(0.6 0.18 300);
+	--color-purple-tint: oklch(0.94 0.03 300);
+
+	--color-green: oklch(0.7 0.15 155);
+	--color-green-tint: oklch(0.94 0.045 155);
+	--color-green-ink: oklch(0.4 0.1 155);
+
+	--color-blue: oklch(0.68 0.13 240);
+	--color-blue-tint: oklch(0.94 0.035 240);
+	--color-blue-ink: oklch(0.42 0.1 240);
+}
+
+body {
+	background: var(--color-bg);
+	color: var(--color-ink);
+	font-family: var(--font-body);
+	-webkit-font-smoothing: antialiased;
+	margin: 0;
+}
