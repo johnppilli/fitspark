@@ -6,12 +6,22 @@
 	import FlameIcon from '$lib/components/icons/FlameIcon.svelte';
 	import PencilIcon from '$lib/components/icons/PencilIcon.svelte';
 	import PlusIcon from '$lib/components/icons/PlusIcon.svelte';
+	import { waterState, setWaterGoal } from '$lib/stores/water.svelte';
 
-	const dailyTargets = [
+	const dailyTargets = $derived([
 		{ label: 'Calories', value: '2,200 kcal / day', tint: 'bg-flame-tint', ink: 'text-flame', icon: ForkKnifeIcon },
-		{ label: 'Water', value: '8 cups / day', tint: 'bg-blue-tint', ink: 'text-blue', icon: DropletIcon },
+		{ label: 'Water', value: `${waterState.goalOz} oz / day`, tint: 'bg-blue-tint', ink: 'text-blue', icon: DropletIcon },
 		{ label: 'Activity', value: '45 active min / day', tint: 'bg-green-tint', ink: 'text-green', icon: BoltIcon }
-	];
+	]);
+
+	let editingWater = $state(false);
+	let waterGoalInput = $state(String(waterState.goalOz));
+
+	function saveWaterGoal() {
+		const value = parseFloat(waterGoalInput);
+		if (value > 0) setWaterGoal(value);
+		editingWater = false;
+	}
 
 	let habits = $state([
 		{ label: 'No fast food', status: 'Active · 3 day streak', on: true },
@@ -36,13 +46,40 @@
 				<div class="{target.tint} {target.ink} flex h-10.5 w-10.5 shrink-0 items-center justify-center rounded-xl">
 					<target.icon size={20} />
 				</div>
-				<div class="flex flex-grow flex-col">
-					<span class="text-[14px] font-bold">{target.label}</span>
-					<span class="text-ink-faint text-xs">{target.value}</span>
-				</div>
-				<button class="bg-bg text-ink-soft flex h-8.5 w-8.5 shrink-0 items-center justify-center rounded-full">
-					<PencilIcon size={15} />
-				</button>
+				{#if target.label === 'Water' && editingWater}
+					<div class="flex flex-grow items-center gap-2">
+						<span class="text-[14px] font-bold">Water</span>
+						<input
+							type="number"
+							inputmode="decimal"
+							bind:value={waterGoalInput}
+							class="border-line bg-bg text-ink w-20 rounded-lg border px-2 py-1 text-[13px] focus:outline-none"
+						/>
+						<span class="text-ink-faint text-xs">oz / day</span>
+					</div>
+					<button
+						onclick={saveWaterGoal}
+						class="bg-blue font-display flex h-8.5 shrink-0 items-center justify-center rounded-full px-3.5 text-[12px] font-bold text-white"
+					>
+						Save
+					</button>
+				{:else}
+					<div class="flex flex-grow flex-col">
+						<span class="text-[14px] font-bold">{target.label}</span>
+						<span class="text-ink-faint text-xs">{target.value}</span>
+					</div>
+					<button
+						onclick={() => {
+							if (target.label === 'Water') {
+								waterGoalInput = String(waterState.goalOz);
+								editingWater = true;
+							}
+						}}
+						class="bg-bg text-ink-soft flex h-8.5 w-8.5 shrink-0 items-center justify-center rounded-full"
+					>
+						<PencilIcon size={15} />
+					</button>
+				{/if}
 			</div>
 		{/each}
 	</div>

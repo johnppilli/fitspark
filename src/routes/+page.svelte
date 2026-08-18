@@ -5,6 +5,9 @@
 	import DropletIcon from '$lib/components/icons/DropletIcon.svelte';
 	import BoltIcon from '$lib/components/icons/BoltIcon.svelte';
 	import CheckCircleIcon from '$lib/components/icons/CheckCircleIcon.svelte';
+	import { waterState } from '$lib/stores/water.svelte';
+
+	const waterPercent = $derived(Math.min(100, Math.round((waterState.ozToday / waterState.goalOz) * 100)));
 </script>
 
 <div class="flex flex-1 flex-col gap-5 px-5 pt-5">
@@ -63,11 +66,11 @@
 				<DropletIcon size={17} />
 			</div>
 			<div>
-				<div class="font-display text-lg font-bold">5</div>
-				<div class="text-ink-faint text-[11px]">/ 8 cups</div>
+				<div class="font-display text-lg font-bold">{waterState.ozToday}</div>
+				<div class="text-ink-faint text-[11px]">/ {waterState.goalOz} oz</div>
 			</div>
 			<div class="bg-track h-1.5 w-full overflow-hidden rounded-full">
-				<div class="bg-blue h-full" style="width: 62%"></div>
+				<div class="bg-blue h-full" style="width: {waterPercent}%"></div>
 			</div>
 		</div>
 

@@ -5,15 +5,19 @@
 	import DropletIcon from '$lib/components/icons/DropletIcon.svelte';
 	import BoltIcon from '$lib/components/icons/BoltIcon.svelte';
 	import DumbbellIcon from '$lib/components/icons/DumbbellIcon.svelte';
+	import { addWater } from '$lib/stores/water.svelte';
 
 	const categories = [
 		{ label: 'Log Food', tint: 'bg-flame-tint', ink: 'text-flame-ink', icon: ForkKnifeIcon, href: '/log/food' },
-		{ label: 'Log Water', tint: 'bg-blue-tint', ink: 'text-blue-ink', icon: DropletIcon, href: null },
+		{ label: 'Log Water', tint: 'bg-blue-tint', ink: 'text-blue-ink', icon: DropletIcon, href: '/log/water' },
 		{ label: 'Log Activity', tint: 'bg-green-tint', ink: 'text-green-ink', icon: BoltIcon, href: null },
 		{ label: 'Log Custom', tint: 'bg-purple-tint', ink: 'text-purple', icon: DumbbellIcon, href: null }
 	];
 
-	const quickRepeats = ['Water +1 cup', 'Banana · 105 kcal', 'Walk · 15 min'];
+	const waterQuickAdds = [
+		{ label: 'Owala +32 oz', oz: 32 },
+		{ label: 'Yeti +64 oz', oz: 64 }
+	];
 </script>
 
 <div class="flex flex-1 flex-col gap-5 px-5 pt-5">
@@ -51,11 +55,13 @@
 	<div class="flex flex-col gap-2.5">
 		<span class="text-ink-soft text-[13px] font-bold">Quick repeat</span>
 		<div class="flex flex-wrap gap-2">
-			{#each quickRepeats as item (item)}
+			{#each waterQuickAdds as item (item.label)}
 				<button
+					onclick={() => addWater(item.oz)}
 					class="border-line bg-surface flex min-h-11 items-center gap-1.5 rounded-full border px-3.5 py-2.5"
 				>
-					<span class="text-[13px] font-semibold">{item}</span>
+					<span class="text-blue"><DropletIcon size={14} /></span>
+					<span class="text-[13px] font-semibold">{item.label}</span>
 				</button>
 			{/each}
 		</div>
