@@ -7,20 +7,57 @@
 	import PencilIcon from '$lib/components/icons/PencilIcon.svelte';
 	import PlusIcon from '$lib/components/icons/PlusIcon.svelte';
 	import { waterState, setWaterGoal } from '$lib/stores/water.svelte';
+	import { nutritionState, setCalorieGoal } from '$lib/stores/nutrition.svelte';
 
 	const dailyTargets = $derived([
-		{ label: 'Calories', value: '2,200 kcal / day', tint: 'bg-flame-tint', ink: 'text-flame', icon: ForkKnifeIcon },
-		{ label: 'Water', value: `${waterState.goalOz} oz / day`, tint: 'bg-blue-tint', ink: 'text-blue', icon: DropletIcon },
-		{ label: 'Activity', value: '45 active min / day', tint: 'bg-green-tint', ink: 'text-green', icon: BoltIcon }
+		{
+			label: 'Calories',
+			value: `${nutritionState.goalCalories.toLocaleString()} kcal / day`,
+			tint: 'bg-flame-tint',
+			ink: 'text-flame',
+			icon: ForkKnifeIcon,
+			unit: 'kcal / day',
+			current: nutritionState.goalCalories,
+			save: setCalorieGoal,
+			buttonColor: 'bg-flame'
+		},
+		{
+			label: 'Water',
+			value: `${waterState.goalOz} oz / day`,
+			tint: 'bg-blue-tint',
+			ink: 'text-blue',
+			icon: DropletIcon,
+			unit: 'oz / day',
+			current: waterState.goalOz,
+			save: setWaterGoal,
+			buttonColor: 'bg-blue'
+		},
+		{
+			label: 'Activity',
+			value: '45 active min / day',
+			tint: 'bg-green-tint',
+			ink: 'text-green',
+			icon: BoltIcon,
+			unit: null,
+			current: 0,
+			save: null,
+			buttonColor: 'bg-green'
+		}
 	]);
 
-	let editingWater = $state(false);
-	let waterGoalInput = $state(String(waterState.goalOz));
+	let editingLabel = $state<string | null>(null);
+	let editValue = $state('');
 
-	function saveWaterGoal() {
-		const value = parseFloat(waterGoalInput);
-		if (value > 0) setWaterGoal(value);
-		editingWater = false;
+	function startEditing(target: (typeof dailyTargets)[number]) {
+		if (!target.save) return;
+		editValue = String(target.current);
+		editingLabel = target.label;
+	}
+
+	function saveEditing(target: (typeof dailyTargets)[number]) {
+		const value = parseFloat(editValue);
+		if (value > 0 && target.save) target.save(value);
+		editingLabel = null;
 	}
 
 	let habits = $state([
@@ -46,20 +83,20 @@
 				<div class="{target.tint} {target.ink} flex h-10.5 w-10.5 shrink-0 items-center justify-center rounded-xl">
 					<target.icon size={20} />
 				</div>
-				{#if target.label === 'Water' && editingWater}
+				{#if editingLabel === target.label}
 					<div class="flex flex-grow items-center gap-2">
-						<span class="text-[14px] font-bold">Water</span>
+						<span class="text-[14px] font-bold">{target.label}</span>
 						<input
 							type="number"
 							inputmode="decimal"
-							bind:value={waterGoalInput}
+							bind:value={editValue}
 							class="border-line bg-bg text-ink w-20 rounded-lg border px-2 py-1 text-[13px] focus:outline-none"
 						/>
-						<span class="text-ink-faint text-xs">oz / day</span>
+						<span class="text-ink-faint text-xs">{target.unit}</span>
 					</div>
 					<button
-						onclick={saveWaterGoal}
-						class="bg-blue font-display flex h-8.5 shrink-0 items-center justify-center rounded-full px-3.5 text-[12px] font-bold text-white"
+						onclick={() => saveEditing(target)}
+						class="{target.buttonColor} font-display flex h-8.5 shrink-0 items-center justify-center rounded-full px-3.5 text-[12px] font-bold text-white"
 					>
 						Save
 					</button>
@@ -69,13 +106,9 @@
 						<span class="text-ink-faint text-xs">{target.value}</span>
 					</div>
 					<button
-						onclick={() => {
-							if (target.label === 'Water') {
-								waterGoalInput = String(waterState.goalOz);
-								editingWater = true;
-							}
-						}}
-						class="bg-bg text-ink-soft flex h-8.5 w-8.5 shrink-0 items-center justify-center rounded-full"
+						onclick={() => startEditing(target)}
+						class="bg-bg text-ink-soft flex h-8.5 w-8.5 shrink-0 items-center justify-center rounded-full disabled:opacity-40"
+						disabled={!target.save}
 					>
 						<PencilIcon size={15} />
 					</button>

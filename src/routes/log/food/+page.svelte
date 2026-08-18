@@ -1,6 +1,8 @@
 <script lang="ts">
 	import ChevronLeftIcon from '$lib/components/icons/ChevronLeftIcon.svelte';
 	import ForkKnifeIcon from '$lib/components/icons/ForkKnifeIcon.svelte';
+	import CheckCircleIcon from '$lib/components/icons/CheckCircleIcon.svelte';
+	import { addNutrition } from '$lib/stores/nutrition.svelte';
 
 	type NutritionResult = {
 		input: string;
@@ -20,6 +22,7 @@
 	let loading = $state(false);
 	let errorMsg = $state('');
 	let hasCalculated = $state(false);
+	let justAdded = $state(false);
 
 	const totals = $derived(
 		results.reduce(
@@ -54,11 +57,21 @@
 			const data = await res.json();
 			results = data.results;
 			hasCalculated = true;
+			justAdded = false;
 		} catch {
 			errorMsg = "Couldn't calculate nutrition — check your connection and try again.";
 		} finally {
 			loading = false;
 		}
+	}
+
+	function addToLog() {
+		if (!totals.calories && !totals.protein && !totals.carbs && !totals.fat) return;
+		addNutrition(totals);
+		justAdded = true;
+		inputText = '';
+		results = [];
+		hasCalculated = false;
 	}
 </script>
 
@@ -137,6 +150,22 @@
 				<span class="text-flame-ink">{Math.round(totals.protein * 10) / 10}g protein</span>
 				<span class="text-flame-ink">{Math.round(totals.carbs * 10) / 10}g carbs</span>
 				<span class="text-flame-ink">{Math.round(totals.fat * 10) / 10}g fat</span>
+			</div>
+		</div>
+
+		<button
+			onclick={addToLog}
+			class="bg-surface border-flame font-display text-flame flex min-h-11 items-center justify-center rounded-2xl border-2 py-3 text-[15px] font-bold"
+		>
+			Add to today's log
+		</button>
+	{/if}
+
+	{#if justAdded}
+		<div class="bg-green-tint flex items-center gap-3 rounded-2xl px-4 py-3.5">
+			<span class="text-green-ink shrink-0"><CheckCircleIcon size={22} /></span>
+			<div class="text-green-ink text-[13px] leading-snug font-medium">
+				Added to today's log — check the Home dashboard.
 			</div>
 		</div>
 	{/if}

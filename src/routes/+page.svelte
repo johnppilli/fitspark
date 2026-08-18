@@ -6,8 +6,12 @@
 	import BoltIcon from '$lib/components/icons/BoltIcon.svelte';
 	import CheckCircleIcon from '$lib/components/icons/CheckCircleIcon.svelte';
 	import { waterState } from '$lib/stores/water.svelte';
+	import { nutritionState } from '$lib/stores/nutrition.svelte';
 
 	const waterPercent = $derived(Math.min(100, Math.round((waterState.ozToday / waterState.goalOz) * 100)));
+	const caloriePercent = $derived(
+		Math.min(100, Math.round((nutritionState.calories / nutritionState.goalCalories) * 100))
+	);
 </script>
 
 <div class="flex flex-1 flex-col gap-5 px-5 pt-5">
@@ -53,11 +57,11 @@
 				<ForkKnifeIcon size={17} />
 			</div>
 			<div>
-				<div class="font-display text-lg font-bold">1,450</div>
-				<div class="text-ink-faint text-[11px]">/ 2,200 kcal</div>
+				<div class="font-display text-lg font-bold">{nutritionState.calories}</div>
+				<div class="text-ink-faint text-[11px]">/ {nutritionState.goalCalories} kcal</div>
 			</div>
 			<div class="bg-track h-1.5 w-full overflow-hidden rounded-full">
-				<div class="bg-flame h-full" style="width: 66%"></div>
+				<div class="bg-flame h-full" style="width: {caloriePercent}%"></div>
 			</div>
 		</div>
 
