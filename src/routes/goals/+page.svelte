@@ -8,6 +8,7 @@
 	import PlusIcon from '$lib/components/icons/PlusIcon.svelte';
 	import { waterState, setWaterGoal } from '$lib/stores/water.svelte';
 	import { nutritionState, setCalorieGoal } from '$lib/stores/nutrition.svelte';
+	import { activityState, setActivityGoal } from '$lib/stores/activity.svelte';
 
 	const dailyTargets = $derived([
 		{
@@ -34,13 +35,13 @@
 		},
 		{
 			label: 'Activity',
-			value: '45 active min / day',
+			value: `${activityState.goalMinutes} active min / day`,
 			tint: 'bg-green-tint',
 			ink: 'text-green',
 			icon: BoltIcon,
-			unit: null,
-			current: 0,
-			save: null,
+			unit: 'min / day',
+			current: activityState.goalMinutes,
+			save: setActivityGoal,
 			buttonColor: 'bg-green'
 		}
 	]);

@@ -7,10 +7,14 @@
 	import CheckCircleIcon from '$lib/components/icons/CheckCircleIcon.svelte';
 	import { waterState } from '$lib/stores/water.svelte';
 	import { nutritionState } from '$lib/stores/nutrition.svelte';
+	import { activityState } from '$lib/stores/activity.svelte';
 
 	const waterPercent = $derived(Math.min(100, Math.round((waterState.ozToday / waterState.goalOz) * 100)));
 	const caloriePercent = $derived(
 		Math.min(100, Math.round((nutritionState.calories / nutritionState.goalCalories) * 100))
+	);
+	const activityPercent = $derived(
+		Math.min(100, Math.round((activityState.minutesToday / activityState.goalMinutes) * 100))
 	);
 </script>
 
@@ -83,11 +87,11 @@
 				<BoltIcon size={17} />
 			</div>
 			<div>
-				<div class="font-display text-lg font-bold">32</div>
-				<div class="text-ink-faint text-[11px]">/ 45 min</div>
+				<div class="font-display text-lg font-bold">{activityState.minutesToday}</div>
+				<div class="text-ink-faint text-[11px]">/ {activityState.goalMinutes} min</div>
 			</div>
 			<div class="bg-track h-1.5 w-full overflow-hidden rounded-full">
-				<div class="bg-green h-full" style="width: 71%"></div>
+				<div class="bg-green h-full" style="width: {activityPercent}%"></div>
 			</div>
 		</div>
 	</div>
